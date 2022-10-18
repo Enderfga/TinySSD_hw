@@ -4,20 +4,7 @@ This repo contains the code, data and trained models for the paper [Tiny SSD: A 
 
 ## Quick Links
 
-- [Overview](#overview)
-- [How to Install](#how-to-install)
-- [Description of Codes](#description-of-codes)
-  - [Workspace](#workspace)
-- [Preprocessing](#preprocessing)
-  - [Preprocessed Data](#preprocessed-data)
-  - [Generate Candidate Summaries](#generate-candidate-summaries)
-  - [Preprocess Your Own Data](#preprocess-your-own-data)
-- [How to Run](#how-to-run)
-  - [Hyper-parameter Setting](#hyper-parameter-setting)
-  - [Train](#train)
-  - [Evaluate](#evaluate)
-- [Results, Outputs, Checkpoints](#results-outputs-checkpoints)
-- [Use BRIO with Huggingface](#use-brio-with-huggingface)
+[TOC]
 
 ## Overview
 
@@ -141,6 +128,17 @@ the ./model/checkpoints/net_100.pkl：class err 2.14e-03, bbox mae 3.32e-03
 I used the following methods to improve performance：
 
 1. HD anti-white detection object to adapt to the test image
+
+   ![](https://img.enderfga.cn/img/1.png)
+
 2. Flip and rotate images, etc. to improve generalization performance
+
+   ![](https://img.enderfga.cn/img/image-20221018155947834.png)
+
 3. soft_nms
+
+   ![](https://img.enderfga.cn/img/42166d224f4a20a4d58841b70d795a2a730ed0e4.jpeg@f_auto)
+
 4. smooth_L1
+
+   ![](https://img.enderfga.cn/img/image-20221018155842392.png)
