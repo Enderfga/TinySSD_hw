@@ -33,6 +33,7 @@ It brings together the efficieny of Fire microarchitecture introduced in **Squee
 * numpy
 * pandas
 * matplotlib
+* opencv-python
 * torch
 * torchvision
 
