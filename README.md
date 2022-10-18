@@ -4,7 +4,17 @@ This repo contains the code, data and trained models for the paper [Tiny SSD: A 
 
 ## Quick Links
 
-[TOC]
+- [ Overview](#Overview)
+- [ Requirements](#Requirements)
+- [How to Install](#How to Install)
+- [Description of Codes](#Description of Codes)
+- [ Preprocessing](#Preprocessing)
+  - [Preprocessed Data](#Preprocessed Data)
+- [How to Run](#How to Run)
+  - [ Train](#Train)
+    - [Finetuning from an existing checkpoint](#Finetuning from an existing checkpoint)
+  - [ Evaluate](#Evaluate)
+- [Results, Outputs, Checkpoints](#Results, Outputs, Checkpoints)
 
 ## Overview
 
@@ -74,7 +84,7 @@ It brings together the efficieny of Fire microarchitecture introduced in **Squee
 │          net_30.pkl
 │          net_40.pkl
 │          net_50.pkl
-│
+│		   ....
 └─utils                      -> utility functions
         anchor.py
         iou.py
@@ -129,16 +139,13 @@ I used the following methods to improve performance：
 
 1. HD anti-white detection object to adapt to the test image
 
-   ![](https://img.enderfga.cn/img/1.png)
-
+   ![](https://img.enderfga.cn/img/image-20221018160400682.png)
 2. Flip and rotate images, etc. to improve generalization performance
 
    ![](https://img.enderfga.cn/img/image-20221018155947834.png)
-
 3. soft_nms
 
    ![](https://img.enderfga.cn/img/42166d224f4a20a4d58841b70d795a2a730ed0e4.jpeg@f_auto)
-
 4. smooth_L1
 
    ![](https://img.enderfga.cn/img/image-20221018155842392.png)
