@@ -1,3 +1,4 @@
+from importlib.resources import path
 import torch
 from data.dataloader import load_data
 import torchvision
@@ -5,9 +6,10 @@ from model.TinySSD import *
 from utils.utils import *
 import argparse
 
-def train(net,device,batch_size,epochs):
+def train(net,device,batch_size,epochs,path):
     train_iter = load_data(batch_size)
-
+    if path:
+        net.load_state_dict(torch.load(path, map_location=torch.device(device)))
 
     trainer = torch.optim.SGD(net.parameters(), lr=0.2, weight_decay=5e-4)
 
@@ -39,10 +41,10 @@ def train(net,device,batch_size,epochs):
 
         # 保存模型参数
         if (epoch+1) % 10 == 0:
-            torch.save(net.state_dict(), 'model\checkpoints/net_' + str(epoch+1) + '.pkl')
+            torch.save(net.state_dict(), './model/checkpoints/net_' + str(epoch+1) + '.pkl')
 
-def test(net,device,threshold):
-    net.load_state_dict(torch.load('model/checkpoints/net_50.pkl', map_location=torch.device(device)))
+def test(net,device,threshold,path):
+    net.load_state_dict(torch.load(path, map_location=torch.device(device)))
 
       
     name = 'data/detection/test/1.jpg'
@@ -61,9 +63,10 @@ if __name__ == '__main__':
     parser.add_argument('--mode', type=str, default='train', help='train or test')
     parser.add_argument('--batch_size', type=int, default=32, help='batch size')
     parser.add_argument('--epochs', type=int, default=50, help='epochs')
-    parser.add_argument('--threshold',type=int,default=0.5,help='threshold')
+    parser.add_argument('--threshold',type=float,default=0.5,help='threshold')
+    parser.add_argument('--path',type=str,help='path of the checkpoint')
     args = parser.parse_args()
     if args.mode == 'train':
-        train(net,device,args.batch_size,args.epochs)
+        train(net,device,args.batch_size,args.epochs,args.path)
     elif args.mode == 'test':
-        test(net,device,args.threshold)
+        test(net,device,args.threshold,args.path)

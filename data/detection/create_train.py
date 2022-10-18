@@ -112,7 +112,7 @@ if __name__ == '__main__':
             y1 = random.randint(0, 256)  # 0 ~ 256
             
             
-            label = 0
+            label = 1
             img_png = cv2.imread('target/' + str(label) + '.png', cv2.IMREAD_UNCHANGED)
             w, h, _ = img_png.shape
             if w > h:

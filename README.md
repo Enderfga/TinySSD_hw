@@ -98,9 +98,12 @@ It brings together the efficieny of Fire microarchitecture introduced in **Squee
 
 We use /data/detection/background to generate the target detection dataset for our experiments.
 
+Since the generated data is stored in the repository, there is no need to run this step.
+
 ### Preprocessed Data
 
 ```python
+cd data/detection/
 python data/detection/create_train.py
 ```
 
@@ -109,114 +112,27 @@ python data/detection/create_train.py
 ### Train
 
 ```console
-python main.py --cuda --gpuid [list of gpuid] --config [name of the config (cnndm/xsum)] -l 
+python main.py --mode=train --batch_size=256 --epochs=100
 ```
 
-The checkpoints and log will be saved in a subfolder of `./cache`.
-
-#### Example: training on CNNDM
-
-```console
-python main.py --cuda --gpuid 0 1 2 3 --config cnndm -l 
-```
+The checkpoints and log will be saved in a subfolder of `./model/checkpoints/`.
 
 #### Finetuning from an existing checkpoint
 
 ```console
-python main.py --cuda --gpuid [list of gpuid] -l --config [name of the config (cnndm/xsum)] --model_pt [model path]
+python main.py --mode=train --batch_size=256 --epochs=100 --path=[model path]
 ```
 
-model path should be a subdirectory in the `./cache` directory, e.g. `cnndm/model.pt` (it shouldn't contain the prefix `./cache/`).
+model path should be a subdirectory in the `./model/checkpoints/` directory, e.g. `--path=./model/checkpoints/net_100.pkl`
 
 ### Evaluate
 
-For ROUGE calculation, we use the standard ROUGE Perl package from [here](https://github.com/summanlp/evaluation/tree/master/ROUGE-RELEASE-1.5.5) in our paper. We lowercased and tokenized (using PTB Tokenizer) texts before calculating the ROUGE scores. Please note that the scores calculated by this package would be sightly *different* from the ROUGE scores calculated/reported during training/intermidiate stage of evalution, because we use a pure python-based ROUGE implementation to calculate those scores for better efficiency.
-
-If you encounter problems when setting up the ROUGE Perl package (unfortunately it happens a lot :( ), you may consider using pure Python-based ROUGE package such as the one we used from the [compare-mt](https://github.com/neulab/compare-mt) package.
-
-We provide the evaluation script in `cal_rouge.py`. If you are going to use Perl ROUGE package, please change line 13 into the path of your perl ROUGE package.
-
 ```python
-_ROUGE_PATH = '/YOUR-ABSOLUTE-PATH/ROUGE-RELEASE-1.5.5/'
-```
-
-To evaluate the model performance, please first use the following command to generate the summaries.
-
-```console
-python main.py --cuda --gpuid [single gpu] --config [name of the config (cnndm/xsum)] -e --model_pt [model path] -g [evaluate the model as a generator] -r [evaluate the model as a scorer/reranker]
-```
-
-model path should be a subdirectory in the `./cache` directory, e.g. `cnndm/model.pt` (it shouldn't contain the prefix `./cache/`).
-The output will be saved in a subfolder of `./result` having the same name of the checkpoint folder.
-
-#### Example: evaluating the model as a generator on CNNDM
-
-```console
-# write the system-generated files to a file: ./result/cnndm/test.out
-python main.py --cuda --gpuid 0 --config cnndm -e --model_pt cnndm/model_generation.bin -g
-
-# tokenize the output file -> ./result/cnndm/test.out.tokenized (you may use other tokenizers)
-export CLASSPATH=/your_path/stanford-corenlp-3.8.0.jar
-cat ./result/cnndm/test.out | java edu.stanford.nlp.process.PTBTokenizer -ioFileList -preserveLines > ./result/cnndm/test.out.tokenized
-
-# calculate the ROUGE scores using ROUGE Perl Package
-python cal_rouge.py --ref ./cnndm/test.target.tokenized --hyp ./result/cnndm/test.out.tokenized -l
-
-# calculate the ROUGE scores using ROUGE Python Implementation
-python cal_rouge.py --ref ./cnndm/test.target.tokenized --hyp ./result/cnndm/test.out.tokenized -l -p
-```
-
-#### Example: evaluating the model as a scorer on CNNDM
-
-```console
-# rerank the candidate summaries
-python main.py --cuda --gpuid 0 --config cnndm -e --model_pt cnndm/model_ranking.bin -r
-
-# calculate the ROUGE scores using ROUGE Perl Package
-# ./result/cnndm/reference and ./result/cnndm/candidate are two folders containing files. Each one of those files contain one summary
-python cal_rouge.py --ref ./result/cnndm/reference --hyp ./result/cnndm/candidate -l
-
-# calculate the ROUGE scores using ROUGE Python Implementation
-# ./result/cnndm/reference and ./result/cnndm/candidate are two folders containing files. Each one of those files contain one summary
-python cal_rouge.py --ref ./result/cnndm/reference --hyp ./result/cnndm/candidate -l -p
+python main.py --mode=test --threshold=0.3 --path=./model/checkpoints/net_100.pkl
 ```
 
 ## Results, Outputs, Checkpoints
 
-The following are ROUGE scores calcualted by the standard ROUGE Perl package.
+the ./model/checkpoints/net_100.pkl：class err 2.14e-03, bbox mae 3.32e-03
 
-### CNNDM
-
-|                  | ROUGE-1 | ROUGE-2 | ROUGE-L |
-| ---------------- | ------- | ------- | ------- |
-| BART             | 44.29   | 21.17   | 41.09   |
-| BRIO-Ctr         | 47.28   | 22.93   | 44.15   |
-| BRIO-Mul         | 47.78   | 23.55   | 44.57   |
-| BRIO-Mul (Cased) | 48.01   | 23.76   | 44.63   |
-
-### XSum
-
-|          | ROUGE-1 | ROUGE-2 | ROUGE-L |
-| -------- | ------- | ------- | ------- |
-| Pegasus  | 47.46   | 24.69   | 39.53   |
-| BRIO-Ctr | 48.13   | 25.13   | 39.84   |
-| BRIO-Mul | 49.07   | 25.59   | 40.40   |
-
-### NYT
-
-|          | ROUGE-1 | ROUGE-2 | ROUGE-L |
-| -------- | ------- | ------- | ------- |
-| BART     | 55.78   | 36.61   | 52.60   |
-| BRIO-Ctr | 55.98   | 36.54   | 52.51   |
-| BRIO-Mul | 57.75   | 38.64   | 54.54   |
-
-Our model outputs on these datasets can be found in `./output`.
-
-We summarize the outputs and model checkpoints below.
-You could load these checkpoints using `model.load_state_dict(torch.load(path_to_checkpoint))`.
-
-|               | Checkpoints                                                                                                                                                                                                           | Model Output                                               | Reference Output                                             |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------ |
-| CNNDM         | [model_generation.bin](https://drive.google.com/file/d/1CEBo6CCujl8QQwRKtYCMlS_s2_diBBS6/view?usp=sharing) `<br>` [model_ranking.bin](https://drive.google.com/file/d/1vxPBuTUvxYqARl9C4wegVVS9g5-h7cwO/view?usp=sharing) | [cnndm.test.ours.out](output/cnndm.test.ours.out)             | [cnndm.test.reference](output/cnndm.test.reference)             |
-| CNNDM (Cased) | [model_generation.bin](https://drive.google.com/file/d/1YDUzNqbT6CC7VG3WfRspe2rM-j5DsjzT/view?usp=sharing)                                                                                                               | [cnndm.test.ours.cased.out](output/cnndm.test.ours.cased.out) | [cnndm.test.cased.reference](output/cnndm.test.cased.reference) |
-| XSum          | [model_generation.bin](https://drive.google.com/file/d/135V7ybBGvjOVdTPuYA1R65uNAN_UoeSL/view?usp=sharing) `<br>` [model_ranking.bin](https://drive.google.com/file/d/1GX6EQcI222NXvvQ8Z0gKQPmc64podbeC/view?usp=sharing) | [xsum.test.ours.out](output/xsum.test.ours.out)               | [xsum.test.reference](output/xsum.test.reference)               |
+![img](output.jpg)

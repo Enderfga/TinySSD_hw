@@ -6,11 +6,6 @@ from utils.iou import *
 
 
 
-
-
-
-
-
 def offset_inverse(anchors, offset_preds):
     """根据带有预测偏移量的锚框来预测边界框"""
     anc = box_corner_to_center(anchors)
