@@ -102,7 +102,7 @@ Since the generated data is stored in the repository, there is no need to run th
 
 ### Preprocessed Data
 
-```python
+```shell
 cd data/detection/
 python data/detection/create_train.py
 ```
@@ -111,15 +111,15 @@ python data/detection/create_train.py
 
 ### Train
 
-```console
+```shell
 python main.py --mode=train --batch_size=256 --epochs=100
 ```
 
-The checkpoints and log will be saved in a subfolder of `./model/checkpoints/`.
+The checkpoints will be saved in a subfolder of `./model/checkpoints/`.
 
 #### Finetuning from an existing checkpoint
 
-```console
+```shell
 python main.py --mode=train --batch_size=256 --epochs=100 --path=[model path]
 ```
 
@@ -136,3 +136,10 @@ python main.py --mode=test --threshold=0.3 --path=./model/checkpoints/net_100.pk
 the ./model/checkpoints/net_100.pkl：class err 2.14e-03, bbox mae 3.32e-03
 
 ![img](output.jpg)
+
+I used the following methods to improve performance：
+
+1. HD anti-white detection object to adapt to the test image
+2. Flip and rotate images, etc. to improve generalization performance
+3. soft_nms
+4. smooth_L1
