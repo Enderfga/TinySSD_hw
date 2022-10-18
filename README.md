@@ -6,15 +6,15 @@ This repo contains the code, data and trained models for the paper [Tiny SSD: A 
 
 - [ Overview](#Overview)
 - [ Requirements](#Requirements)
-- [How to Install](#How to Install)
-- [Description of Codes](#Description of Codes)
+- [How to Install](#How-to-Install)
+- [Description of Codes](#Description-of-Codes)
 - [ Preprocessing](#Preprocessing)
-  - [Preprocessed Data](#Preprocessed Data)
-- [How to Run](#How to Run)
+  - [Preprocessed Data](#Preprocessed-Data)
+- [How to Run](#How-to-Run)
   - [ Train](#Train)
-    - [Finetuning from an existing checkpoint](#Finetuning from an existing checkpoint)
+    - [Finetuning from an existing checkpoint](#Finetuning-from-an-existing-checkpoint)
   - [ Evaluate](#Evaluate)
-- [Results, Outputs, Checkpoints](#Results, Outputs, Checkpoints)
+- [Results, Outputs, Checkpoints](#Results-Outputs-Checkpoints)
 
 ## Overview
 
@@ -44,7 +44,7 @@ It brings together the efficieny of Fire microarchitecture introduced in **Squee
   pip install -r requirements.txt
   ```
 
-## Description of Codes
+## Description of Files
 
 ```
 │──main.py                 -> Run models using different models
