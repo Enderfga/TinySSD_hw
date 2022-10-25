@@ -79,12 +79,7 @@ It brings together the efficieny of Fire microarchitecture introduced in **Squee
 │  │  __init__.py
 │  │
 │  └─checkpoints             -> Trained model weights
-│          net_10.pkl
-│          net_20.pkl
-│          net_30.pkl
-│          net_40.pkl
-│          net_50.pkl
-│		   ....
+│     net_100.pkl
 └─utils                      -> utility functions
         anchor.py
         iou.py
@@ -102,7 +97,7 @@ Since the generated data is stored in the repository, there is no need to run th
 
 ```shell
 cd data/detection/
-python data/detection/create_train.py
+python create_train.py
 ```
 
 ## How to Run
