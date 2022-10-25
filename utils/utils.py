@@ -94,7 +94,7 @@ def bbox_eval(bbox_preds, bbox_labels, bbox_masks):
 
 
 
-def display(img, output, threshold):
+def display(img, output, threshold,name):
     fig = plt.imshow(img)
     for row in output:
         score = float(row[1])
@@ -104,7 +104,7 @@ def display(img, output, threshold):
         bbox = [row[2:6] * torch.tensor((w, h, w, h), device=row.device)]
         show_bboxes(fig.axes, bbox, '%.2f' % score, 'w')
     # 保存图像
-    plt.savefig('output.jpg')
+    plt.savefig('result_'+name.split('/')[-1])
 
 def predict(X,net,device):
     net.eval()

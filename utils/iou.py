@@ -1,6 +1,7 @@
 import torch
 from utils.anchor import *
 import torch.nn as nn
+import numpy as np
 
 def box_iou(boxes1, boxes2):
     """计算两个锚框或边界框列表中成对的交并比"""
@@ -94,11 +95,15 @@ bbox_loss = nn.L1Loss(reduction='none')
 def smooth_l1(x, sigma=1.0):
     sigma2 = sigma ** 2
     return torch.where(x.abs() < 1. / sigma2, 0.5 * x ** 2 * sigma2, x.abs() - 0.5 / sigma2)
-
+# 使用焦点损失
+def focal_loss(x, gamma=2):
+    p = torch.exp(-x)
+    return (1 - p) ** gamma * x
 def calc_loss(cls_preds, cls_labels, bbox_preds, bbox_labels, bbox_masks):
     batch_size, num_classes = cls_preds.shape[0], cls_preds.shape[2]
-    cls = cls_loss(cls_preds.reshape(-1, num_classes),
-                   cls_labels.reshape(-1)).reshape(batch_size, -1).mean(dim=1)
+    # cls = cls_loss(cls_preds.reshape(-1, num_classes),cls_labels.reshape(-1)).reshape(batch_size, -1).mean(dim=1)
+    # 使用焦点损失
+    cls = focal_loss(cls_loss(cls_preds.reshape(-1, num_classes),cls_labels.reshape(-1)).reshape(batch_size, -1)).mean(dim=1)
     #bbox = bbox_loss(bbox_preds * bbox_masks,bbox_labels * bbox_masks).mean(dim=1)
     # 使用平滑L1
     bbox = smooth_l1((bbox_preds - bbox_labels) * bbox_masks).mean(dim=1)

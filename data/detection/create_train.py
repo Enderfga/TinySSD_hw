@@ -111,8 +111,8 @@ if __name__ == '__main__':
             x1 = random.randint(0, 256)  # 0 ~ 256
             y1 = random.randint(0, 256)  # 0 ~ 256
             
-            
-            label = 1
+            # 设置label随机为1或0
+            label = random.randint(0, 1)
             img_png = cv2.imread('target/' + str(label) + '.png', cv2.IMREAD_UNCHANGED)
             w, h, _ = img_png.shape
             if w > h:

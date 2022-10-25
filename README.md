@@ -131,9 +131,10 @@ python main.py --mode=test --threshold=0.3 --path=./model/checkpoints/net_100.pk
 
 ## Results, Outputs, Checkpoints
 
-the ./model/checkpoints/net_100.pkl：class err 2.14e-03, bbox mae 3.32e-03
+the ./model/checkpoints/net_100.pkl：class err 1.54e-03, bbox mae 1.90e-03
 
-![img](output.jpg)
+![img](result_1.jpg)
+![img](result_2.jpg)
 
 I used the following methods to improve performance：
 
@@ -149,3 +150,16 @@ I used the following methods to improve performance：
 4. smooth_L1
 
    ![](https://img.enderfga.cn/img/image-20221018155842392.png)
+5. Focal Loss
+
+   ![](https://img.enderfga.cn/img/20221025160416.png)
+
+If we have more classes, we can further improve the model in the following aspects:
+
+1. When an object is much smaller compared with the image, the model could resize the input image bigger.
+
+2. There are typically a vast number of negative anchor boxes. To make the class distribution more balanced, we could downsample negative anchor boxes.
+
+3. In the loss function, assign different weight hyperparameters to the class loss and the offset loss.
+
+4. Use other methods to evaluate the object detection model, such as those in the single shot multibox detection paper (Liu et al., 2016).

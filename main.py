@@ -1,5 +1,6 @@
 from importlib.resources import path
 import torch
+import glob
 from data.dataloader import load_data
 import torchvision
 from model.TinySSD import *
@@ -45,14 +46,13 @@ def train(net,device,batch_size,epochs,path):
 
 def test(net,device,threshold,path):
     net.load_state_dict(torch.load(path, map_location=torch.device(device)))
+    files = glob.glob('./data/detection/test/*.jpg')
+    for name in files:
+        X = torchvision.io.read_image(name).unsqueeze(0).float()
+        img = X.squeeze(0).permute(1, 2, 0).long()
 
-      
-    name = 'data/detection/test/1.jpg'
-    X = torchvision.io.read_image(name).unsqueeze(0).float()
-    img = X.squeeze(0).permute(1, 2, 0).long()
-
-    output = predict(X,net,device)    
-    display(img, output.cpu(), threshold=threshold)
+        output = predict(X,net,device) 
+        display(img, output.cpu(), threshold=threshold,name=name)
 
 
 if __name__ == '__main__':
